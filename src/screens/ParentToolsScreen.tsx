@@ -8,11 +8,14 @@ import {
   Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const ParentToolsScreen = () => {
   const [recentTopics, setRecentTopics] = useState<string[]>([]);
   const [funFactCounts, setFunFactCounts] = useState<Record<string, number>>({});
   const [mostTappedFact, setMostTappedFact] = useState<string | null>(null);
+
+  const navigation = useNavigation();
 
   const loadData = async () => {
     try {
@@ -50,10 +53,14 @@ const ParentToolsScreen = () => {
       await AsyncStorage.removeItem('funFactCounts');
       console.log('🧼 Cleared recent topics and fun fact counts');
       Alert.alert('History Cleared', 'All stored data has been removed.');
-      loadData(); // Refresh the screen
+      loadData();
     } catch (error) {
       console.error('❌ Error clearing history:', error);
     }
+  };
+
+  const handleLogout = () => {
+    navigation.navigate('ParentAuth'); // Go back to PIN screen
   };
 
   useEffect(() => {
@@ -86,6 +93,8 @@ const ParentToolsScreen = () => {
 
       <View style={styles.buttonContainer}>
         <Button title="Clear History" onPress={clearHistory} color="#d62828" />
+        <View style={styles.spacer} />
+        <Button title="Log Out" onPress={handleLogout} color="#1d3557" />
       </View>
     </View>
   );
@@ -116,6 +125,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 30,
     alignItems: 'center',
+  },
+  spacer: {
+    height: 12,
   },
 });
 
