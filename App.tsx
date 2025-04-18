@@ -8,6 +8,7 @@ import HomeStackNavigator from './src/navigation/HomeStackNavigator';
 import FunFactsScreen from './src/screens/FunFactsScreen';
 import ParentAuthScreen from './src/screens/ParentAuthScreen';
 import ParentToolsScreen from './src/screens/ParentToolsScreen';
+import VideoSearchScreen from './src/screens/VideoSearchScreen';
 
 const Tab = createBottomTabNavigator();
 const ParentStack = createNativeStackNavigator();
@@ -36,6 +37,7 @@ export default function App() {
             let iconName = 'home';
             if (route.name === 'Fun Facts') iconName = 'bulb';
             else if (route.name === 'Parent Tools') iconName = 'settings';
+            else if (route.name === 'Videos') iconName = 'play-circle';
             return <Ionicons name={iconName} size={size} color={color} />;
           },
           tabBarActiveTintColor: '#1d3557',
@@ -44,6 +46,7 @@ export default function App() {
       >
         <Tab.Screen name="Home" component={HomeStackNavigator} />
         <Tab.Screen name="Fun Facts" component={FunFactsScreen} />
+        <Tab.Screen name="Videos" component={VideoSearchScreen} />
         <Tab.Screen name="Parent Tools" component={ParentStackNavigator} />
       </Tab.Navigator>
     </NavigationContainer>
