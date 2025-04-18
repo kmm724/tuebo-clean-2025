@@ -4,6 +4,8 @@ import {
   Text,
   StyleSheet,
   FlatList,
+  Button,
+  Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -12,30 +14,49 @@ const ParentToolsScreen = () => {
   const [funFactCounts, setFunFactCounts] = useState<Record<string, number>>({});
   const [mostTappedFact, setMostTappedFact] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const recent = await AsyncStorage.getItem('recentTopics');
-        const counts = await AsyncStorage.getItem('funFactCounts');
+  const loadData = async () => {
+    try {
+      const recent = await AsyncStorage.getItem('recentTopics');
+      const counts = await AsyncStorage.getItem('funFactCounts');
 
-        if (recent) {
-          setRecentTopics(JSON.parse(recent));
-        }
-
-        if (counts) {
-          const parsed = JSON.parse(counts);
-          setFunFactCounts(parsed);
-
-          const sorted = Object.entries(parsed).sort((a, b) => b[1] - a[1]);
-          if (sorted.length > 0) {
-            setMostTappedFact(`${sorted[0][0]} (tapped ${sorted[0][1]} times)`);
-          }
-        }
-      } catch (error) {
-        console.error('❌ Error loading parent data:', error);
+      if (recent) {
+        setRecentTopics(JSON.parse(recent));
+      } else {
+        setRecentTopics([]);
       }
-    };
 
+      if (counts) {
+        const parsed = JSON.parse(counts);
+        setFunFactCounts(parsed);
+
+        const sorted = Object.entries(parsed).sort((a, b) => b[1] - a[1]);
+        if (sorted.length > 0) {
+          setMostTappedFact(`${sorted[0][0]} (tapped ${sorted[0][1]} times)`);
+        } else {
+          setMostTappedFact(null);
+        }
+      } else {
+        setFunFactCounts({});
+        setMostTappedFact(null);
+      }
+    } catch (error) {
+      console.error('❌ Error loading parent data:', error);
+    }
+  };
+
+  const clearHistory = async () => {
+    try {
+      await AsyncStorage.removeItem('recentTopics');
+      await AsyncStorage.removeItem('funFactCounts');
+      console.log('🧼 Cleared recent topics and fun fact counts');
+      Alert.alert('History Cleared', 'All stored data has been removed.');
+      loadData(); // Refresh the screen
+    } catch (error) {
+      console.error('❌ Error clearing history:', error);
+    }
+  };
+
+  useEffect(() => {
     loadData();
   }, []);
 
@@ -62,6 +83,10 @@ const ParentToolsScreen = () => {
       ) : (
         <Text style={styles.item}>No fun fact taps yet.</Text>
       )}
+
+      <View style={styles.buttonContainer}>
+        <Button title="Clear History" onPress={clearHistory} color="#d62828" />
+      </View>
     </View>
   );
 };
@@ -87,6 +112,10 @@ const styles = StyleSheet.create({
   item: {
     fontSize: 16,
     marginBottom: 6,
+  },
+  buttonContainer: {
+    marginTop: 30,
+    alignItems: 'center',
   },
 });
 
