@@ -1,13 +1,33 @@
-import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import { funFacts } from '../funFactsData';
 import { updateFunFactCount } from '../utils/updateFunFactCount';
+import { getMostTappedFact } from '../utils/getMostTappedFact';
 
 const FunFactsScreen = () => {
   const handlePress = (fact: string) => {
-    updateFunFactCount(fact); // ✅ Track the tap
+    updateFunFactCount(fact);
     console.log('🤓 Fun Fact tapped:', fact);
   };
+
+  useEffect(() => {
+    const logMostTapped = async () => {
+      const topFact = await getMostTappedFact();
+      if (topFact) {
+        console.log('🏆 Most tapped fun fact:', topFact);
+      } else {
+        console.log('📭 No fun fact taps yet.');
+      }
+    };
+
+    logMostTapped();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -16,7 +36,10 @@ const FunFactsScreen = () => {
         data={funFacts}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handlePress(item)} style={styles.factItem}>
+          <TouchableOpacity
+            onPress={() => handlePress(item)}
+            style={styles.factItem}
+          >
             <Text style={styles.factText}>{item}</Text>
           </TouchableOpacity>
         )}
