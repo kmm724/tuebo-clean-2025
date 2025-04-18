@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import HomeStackNavigator from './src/navigation/HomeStackNavigator';
 import FunFactsScreen from './src/screens/FunFactsScreen';
+import ParentToolsScreen from './src/screens/ParentToolsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -16,6 +17,7 @@ export default function App() {
           tabBarIcon: ({ color, size }) => {
             let iconName = 'home';
             if (route.name === 'Fun Facts') iconName = 'bulb';
+            else if (route.name === 'Parent Tools') iconName = 'settings';
             return <Ionicons name={iconName} size={size} color={color} />;
           },
           tabBarActiveTintColor: '#1d3557',
@@ -24,6 +26,7 @@ export default function App() {
       >
         <Tab.Screen name="Home" component={HomeStackNavigator} />
         <Tab.Screen name="Fun Facts" component={FunFactsScreen} />
+        <Tab.Screen name="Parent Tools" component={ParentToolsScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );
