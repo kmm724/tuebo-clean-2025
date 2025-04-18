@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { saveRecentTopic } from '../utils/saveRecentTopic';
 
 const HomeScreen = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -9,6 +10,7 @@ const HomeScreen = () => {
   const handleSearch = () => {
     const trimmed = searchTerm.trim();
     if (trimmed.length > 0) {
+      saveRecentTopic(trimmed); // ✅ Save to AsyncStorage
       navigation.navigate('SearchResults', { searchTerm: trimmed });
       setSearchTerm('');
     }

@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
 import HomeStackNavigator from './src/navigation/HomeStackNavigator';
+import FunFactsScreen from './src/screens/FunFactsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -14,6 +15,7 @@ export default function App() {
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
             let iconName = 'home';
+            if (route.name === 'Fun Facts') iconName = 'bulb';
             return <Ionicons name={iconName} size={size} color={color} />;
           },
           tabBarActiveTintColor: '#1d3557',
@@ -21,6 +23,7 @@ export default function App() {
         })}
       >
         <Tab.Screen name="Home" component={HomeStackNavigator} />
+        <Tab.Screen name="Fun Facts" component={FunFactsScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );
