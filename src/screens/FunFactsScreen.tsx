@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
+import * as Speech from 'expo-speech';
 import { funFacts } from '../funFactsData';
 import { updateFunFactCount } from '../utils/updateFunFactCount';
 import { getMostTappedFact } from '../utils/getMostTappedFact';
@@ -14,6 +15,9 @@ const FunFactsScreen = () => {
   const handlePress = (fact: string) => {
     updateFunFactCount(fact);
     console.log('🤓 Fun Fact tapped:', fact);
+
+    const factWithoutEmoji = fact.replace(/^[^\w\s]*/, '').trim();
+    Speech.speak(factWithoutEmoji);
   };
 
   useEffect(() => {
