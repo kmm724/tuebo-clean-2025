@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { funFacts } from '../funFactsData';
+import { updateFunFactCount } from '../utils/updateFunFactCount';
 
 const FunFactsScreen = () => {
   const handlePress = (fact: string) => {
+    updateFunFactCount(fact); // ✅ Track the tap
     console.log('🤓 Fun Fact tapped:', fact);
   };
 
