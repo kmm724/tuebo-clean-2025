@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,48 +7,69 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import { WebView } from 'react-native-webview';
+import YoutubePlayer from 'react-native-youtube-iframe';
 
 const sampleVideos = [
   {
-    id: 'HGeuA4iJ8vI', // How big is the ocean?
-    title: 'How Big is the Ocean?',
+    id: '7y2C8Gq3Cgo',
+    title: 'What Do Germs Look Like?',
   },
   {
-    id: 'dQw4w9WgXcQ', // Kid-safe video placeholder (replace this)
-    title: 'Fun with Dinosaurs!',
+    id: 'v9pzmYkN4jY',
+    title: 'The Solar System',
   },
   {
-    id: 'gBnvGSg2Ekk', // Why do we yawn?
-    title: 'Why Do We Yawn?',
+    id: 'Yl4aT7ZvzKE',
+    title: 'What Is Sound?',
   },
 ];
 
 const VideoSearchScreen = () => {
+  const [playing, setPlaying] = useState(false);
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
+  const playerRef = useRef(null);
 
-  const renderItem = ({ item }: { item: typeof sampleVideos[0] }) => (
-    <TouchableOpacity
-      style={styles.videoItem}
-      onPress={() => setSelectedVideoId(item.id)}
-    >
-      <Text style={styles.videoTitle}>{item.title}</Text>
-    </TouchableOpacity>
-  );
+  const togglePlaying = useCallback(() => {
+    setPlaying((prev) => !prev);
+  }, []);
 
   const renderPlayer = () => {
-    if (!selectedVideoId) return null;
+    if (!selectedVideoId) {
+      console.log('No video selected yet');
+      return null;
+    }
+
+    console.log('Rendering player for:', selectedVideoId);
+
     return (
-      <View style={styles.webviewContainer}>
-        <WebView
-          style={styles.webview}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          source={{ uri: `https://www.youtube.com/embed/${selectedVideoId}?controls=1&modestbranding=1&rel=0` }}
+      <View style={styles.playerContainer}>
+        <YoutubePlayer
+          ref={playerRef}
+          height={220}
+          play={playing}
+          videoId={selectedVideoId}
+          onChangeState={(event) => {
+            if (event === 'ended') {
+              setPlaying(false);
+            }
+          }}
         />
       </View>
     );
   };
+
+  const renderItem = ({ item }: { item: typeof sampleVideos[0] }) => (
+    <TouchableOpacity
+      style={styles.videoItem}
+      onPress={() => {
+        console.log('Playing:', item.id);
+        setSelectedVideoId(item.id);
+        setPlaying(true);
+      }}
+    >
+      <Text style={styles.videoTitle}>{item.title}</Text>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
@@ -65,6 +86,7 @@ const VideoSearchScreen = () => {
 };
 
 const { width } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -90,13 +112,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  webviewContainer: {
-    height: (width * 9) / 16,
+  playerContainer: {
     width: '100%',
-    marginBottom: 10,
-  },
-  webview: {
-    flex: 1,
+    alignItems: 'center',
+    marginBottom: 20,
   },
 });
 
